@@ -71,8 +71,33 @@
 </style>
 
 <?php
-
 require_once 'db.php';
+
+$result = doQuery(array("sql" => "SELECT products.pid AS 'Pid', products.count AS 'count', products.name AS 'name', products.price AS 'price' FROM history INNER JOIN products ON history.step LIKE CONCAT('%',products.pid,'%') GROUP BY products.pid", "attr" => array()))->fetchAll(PDO::FETCH_ASSOC);
+echo "<div class='table'>"
+ .      "<div class='thead'>"
+        .   "<div class='tr'>"
+        .       "<div class='th'>Pid</div>"
+        .       "<div class='th'>Termék neve</div>"
+        .       "<div class='th'>Jelenlegi ár</div>"
+        .       "<div class='th'>Jelenlegi darabszáma</div>"
+        .       "<div class='th'>#</div>"
+        .   "</div>"
+        . "</div>"
+        . "<div class='tbody'>";
+for($i=0;$i<count($result);$i++){
+        echo "<div class='tr'>"
+                . "<div class='td'>".$result[$i]['Pid']."</div>"
+                . "<div class='td'>".$result[$i]['name']."</div>"
+                . "<div class='td'>".$result[$i]['price']." Ft</div>"
+                . "<div class='td'>".$result[$i]['count']." db</div>"
+                . "<div class='td'><a class='btn' href='".getDomain()."/info.php?pid=".$result[$i]['Pid']."'>Részletek</a><a class='btn orange' href='".getDomain()."/edit.php?pid=".$result[$i]['Pid']."'>Módosítás</a></div>"
+            . "</div>";
+
+}
+echo         "</div>"
+    . "</div>";
+
 
 $result = doQuery(array("sql" => "SELECT cards.uid AS 'Uid', cards.name AS 'name', cards.email AS 'email', cards.money AS 'money', COUNT(history.step) AS 'transaction_count' FROM history INNER JOIN cards ON history.uid = cards.uid GROUP BY cards.uid", "attr" => array()))->fetchAll(PDO::FETCH_ASSOC);
 echo "<div class='table'>"

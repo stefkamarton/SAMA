@@ -95,10 +95,33 @@
 </style>
 
 <?php
-
 require_once 'db.php';
 
-echo "<a href='".getDomain()."/list.php"."' style='max-width:200px;' class='btn red'>Vissza</a>";
+echo "<a href='" . getDomain() . "/list.php" . "' style='max-width:200px;' class='btn red'>Vissza</a>";
+if (isset($_GET['pid'])) {
+    $result = doQuery(array("sql" => "SELECT products.pid AS 'Pid', products.count AS 'count', products.name AS 'name', products.price AS 'price' FROM products WHERE pid=:pid", "attr" => array("pid" => $_GET['pid'])))->fetch(PDO::FETCH_ASSOC);
+
+    // $result = doQuery(array("sql" => "SELECT cards.uid AS 'Uid', cards.name AS 'name', cards.email AS 'email', cards.money AS 'money' FROM cards WHERE uid=:uid", "attr" => array("uid" => $_GET['uid'])))->fetch(PDO::FETCH_ASSOC);
+    echo "<div class='table'>"
+    . "<form action='' method='post' class='tbody'>"
+    . "<div class='tr'>"
+    . "<div class='td'>Pid:</div>"
+    . "<div class='td'><input value='" . $result['Pid'] . "' readOnly required /></div>"
+    . " </div><div class='tr'>"
+    . "<div class='td'>Név:</div>"
+    . "<div class='td'><input type='text' name='name' value='" . $result['name'] . "' required/></div>"
+    . " </div><div class='tr'>"
+    . "<div class='td'>Darabszáma:</div>"
+    . "<div class='td'><input type='number' name='count' value='" . $result['count'] . "' required /></div>"
+    . " </div><div class='tr'>"
+    . "<div class='td'>Jelenlegi ár!</div>"
+    . "<div class='td'><input type='number' name='price' value='" . $result['price'] . "' required /></div>"
+    . " </div><div class='tr'>"
+    . "<div class='td'></div>"
+    . "<div class='td'><button name='save' style='display:block;width:100%;' class='btn red'>Mentés</button></div>"
+    . " </div>"
+    . "</form></div>";
+}
 if (isset($_GET['uid'])) {
     $result = doQuery(array("sql" => "SELECT cards.uid AS 'Uid', cards.name AS 'name', cards.email AS 'email', cards.money AS 'money' FROM cards WHERE uid=:uid", "attr" => array("uid" => $_GET['uid'])))->fetch(PDO::FETCH_ASSOC);
     echo "<div class='table'>"
@@ -113,8 +136,8 @@ if (isset($_GET['uid'])) {
     . "<div class='td'>E-mail:</div>"
     . "<div class='td'><input type='email' name='email' value='" . $result['email'] . "' required /></div>"
     . " </div><div class='tr'>"
-    . "<div class='td'>Jelenlegi egyenleg:</div>"
-    . "<div class='td'><input type='number' name='money' value='" . $result['money'] . "' required /></div>"
+    . "<div class='td'>Jelenlegi egyenleg feltöltés (<b>" . $result['money'] . " Ft</b>):<br>Írd be a hozzáadadandó összeget!</div>"
+    . "<div class='td'><input type='number' name='money' value='0' required /></div>"
     . " </div><div class='tr'>"
     . "<div class='td'></div>"
     . "<div class='td'><button name='save' style='display:block;width:100%;' class='btn red'>Mentés</button></div>"
@@ -122,11 +145,31 @@ if (isset($_GET['uid'])) {
     . "</form></div>";
 }
 if (isset($_POST['save'])) {
-    if (!empty($_POST['name']) && !empty($_POST['money']) && !empty($_POST['email'])) {
-        if (doQuery(array("sql" => "UPDATE cards SET money=:money, name=:name, email=:email WHERE uid=:uid", "attr" => array("uid" => $_GET['uid'], "money" => $_POST['money'], "name" => $_POST['name'], "email" => $_POST['email'])))) {
-            echo "<script>alert('Sikeres módosítás!')</script>";
-        } else {
-            echo "<script>alert('Sikertelen módosítás! SQL hiba')</script>";
+    if (isset($_GET['uid'])) {
+        if (!empty($_POST['name']) && !empty($_POST['money']) && !empty($_POST['email'])) {
+            if (doQuery(array("sql" => "UPDATE cards SET money=:money, name=:name, email=:email WHERE uid=:uid", "attr" => array("uid" => $_GET['uid'], "money" => ($result['money'] + $_POST['money']), "name" => $_POST['name'], "email" => $_POST['email'])))) {
+                if ($_POST['money'] > 0) {
+                    doQuery(array("sql" => "INSERT INTO history (uid,step,money) VALUES (:uid,:step,:money)", "attr" => array("uid" => $_GET['uid'], "step" => "UPLOAD_MONEY", "money" => $_POST['money'])));
+                }
+                echo "<script>alert('Sikeres módosítás!')</script>";
+            } else {
+                echo "<script>alert('Sikertelen módosítás! SQL hiba')</script>";
+            }
+        }
+    }
+    if (isset($_GET['pid'])) {
+        if (!empty($_POST['name']) && !empty($_POST['price']) && !empty($_POST['count'])) {
+            if (doQuery(array("sql" => "UPDATE products SET price=:price, name=:name, count=:count WHERE pid=:pid", "attr" => array("pid" => $_GET['pid'], "price" => $_POST['price'], "name" => $_POST['name'], "count" => $_POST['count'])))) {
+                if ($_POST['count'] != $result['count']) {
+                    doQuery(array("sql" => "INSERT INTO prod_history (pid,step,money) VALUES (:pid,:step,:money)", "attr" => array("pid" => $_GET['pid'], "step" => "NEW_COUNT", "money" => ($_POST['count']-$result['count']))));
+                }
+                if ($_POST['price'] != $result['price']) {
+                    doQuery(array("sql" => "INSERT INTO prod_history (pid,step,money) VALUES (:pid,:step,:money)", "attr" => array("pid" => $_GET['pid'], "step" => "NEW_PRICE", "money" => $_POST['money'])));
+                }
+                echo "<script>alert('Sikeres módosítás!')</script>";
+            } else {
+                echo "<script>alert('Sikertelen módosítás! SQL hiba')</script>";
+            }
         }
     }
     header("REFRESH:0");
