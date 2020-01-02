@@ -128,6 +128,36 @@ if (isset($_GET['uid'])) {
 
     echo "</form></div>";
 }
+if (isset($_GET['pid'])) {
+    $result = doQuery(array("sql" => "SELECT products.pid AS 'Pid', products.name AS 'name' FROM products WHERE products.pid=:pid", "attr" => array("pid" => $_GET['pid'])))->fetchAll(PDO::FETCH_ASSOC);
+    var_dump($result);
+    echo "<div class='table'>"
+    . "<form action='' method='post' class='tbody'>"
+    . "<div class='tr'>"
+    . "<div class='td'>Vásárlási statisztika:</div>"
+    . "<div class='td'>" . $result[0]['name'] . "</div>"
+    . " </div>";
+    for ($i = 0; $i < count($result); $i++) {
+        if ($result[$i]['termeknev'] == "BUY_1" || $result[$i]['termeknev'] == "BUY_2" || $result[$i]['termeknev'] == "BUY_3") {
+            $result[$i]['termeknev'] = str_replace("BUY_", "", $result[$i]['termeknev']);
+            $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
+            echo "<div class='tr'>"
+            . "<div class='td'><b><u>Termék:</u></b><br>Vásárolt darab:<br>Összesen elköltött pénz erre a termékre:<br>Legdrágább vásárlási ár:<br>Legolcsóbb vásárlási ár:<br>Átlag vásárlási ár:<br>Jelenlegi ár:</div>"
+            . "<div class='td'>" . $prod['name'] . "<br>" . $result[$i]['darab'] . " db<br>" . $result[$i]['osszartermek'] . " Ft<br>" . $result[$i]['maxprice'] . " Ft / db<br>" . $result[$i]['minprice'] . " Ft / db<br>" . $result[$i]['avgprice'] . " Ft / db<br>" . $prod['price'] . " Ft / db</div>"
+            . " </div>";
+        }
+        if ($result[$i]['termeknev'] == "UPLOAD_MONEY") {
+            $result[$i]['termeknev'] = "Pénz feltöltés";
+            $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
+            echo "<div class='tr'>"
+            . "<div class='td'><b><u>Pénz feltöltés:</u></b><br>Összes pénz feltöltés:<br>Összesen feltöltött pénz:<br>Legnagyobb feltöltött összeg:<br>Legkisebb feltöltött összeg:<br>Átlagosan feltöltött összeg:</div>"
+            . "<div class='td'>" . $prod['name'] . "<br>" . $result[$i]['darab'] . " db<br>" . $result[$i]['osszartermek'] . " Ft<br>" . $result[$i]['maxprice'] . " Ft<br>" . $result[$i]['minprice'] . " Ft<br>" . $result[$i]['avgprice'] . " Ft</div>"
+            . " </div>";
+        }
+    }
+
+    echo "</form></div>";
+}
 ?>
 
 

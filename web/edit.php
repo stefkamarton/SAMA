@@ -161,10 +161,10 @@ if (isset($_POST['save'])) {
         if (!empty($_POST['name']) && !empty($_POST['price']) && !empty($_POST['count'])) {
             if (doQuery(array("sql" => "UPDATE products SET price=:price, name=:name, count=:count WHERE pid=:pid", "attr" => array("pid" => $_GET['pid'], "price" => $_POST['price'], "name" => $_POST['name'], "count" => $_POST['count'])))) {
                 if ($_POST['count'] != $result['count']) {
-                    doQuery(array("sql" => "INSERT INTO prod_history (pid,step,money) VALUES (:pid,:step,:money)", "attr" => array("pid" => $_GET['pid'], "step" => "NEW_COUNT", "money" => ($_POST['count']-$result['count']))));
+                    doQuery(array("sql" => "INSERT INTO prod_history (pid, step, money) VALUES (:pid, :step, :money)", "attr" => array("pid" => $_GET['pid'], "step" => "NEW_COUNT", "money" => ($_POST['count']-$result['count']))));
                 }
                 if ($_POST['price'] != $result['price']) {
-                    doQuery(array("sql" => "INSERT INTO prod_history (pid,step,money) VALUES (:pid,:step,:money)", "attr" => array("pid" => $_GET['pid'], "step" => "NEW_PRICE", "money" => $_POST['money'])));
+                    doQuery(array("sql" => "INSERT INTO prod_history (pid, step, money) VALUES (:pid, :step, :money)", "attr" => array("pid" => $_GET['pid'], "step" => "NEW_PRICE", "money" => $_POST['price'])));
                 }
                 echo "<script>alert('Sikeres módosítás!')</script>";
             } else {
