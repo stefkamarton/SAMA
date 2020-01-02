@@ -1,6 +1,7 @@
 # SAMA Project
 #### Mikroelektromechanikai rendszerek (GKNB_INTM020)
 **Cím:** Bankkártyás üdítő automata
+
 **Projekt leírás:** Egy bankkártyás üdítőautomata szimulációját készítettük el. Az üdítőket ledek fogják jelezni, illetve a vásárlás sikerességét és sikertelenségét is, amiről a későbbiekben e-mail-t fogunk kapni. Hasonló képpen fogunk értesülni, ha a készleten lévő üdítők száma egy bizonyos darabszám alá csökken, így időbe után tudjuk tölteni.
 Az üdítők és az úgynevezett "bankkártyák" adatait egy adatbázisban fogjuk tárolni, amit egy webes felületen keresztül tudunk módosítani.
 
