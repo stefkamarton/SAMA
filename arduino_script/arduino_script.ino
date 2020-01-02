@@ -6,6 +6,8 @@
 #include <PN532.h>              // NFC library
 #include <NfcAdapter.h>         // NFC library
 
+//const char* ssid     = "STEFKA_NET";
+//const char* password = "PEPSI1234";
 const char* ssid     = "W1CA";
 const char* password = "N7XRvYdT";
 const char* host = "10.42.0.1";  // IP serveur - Server IP
@@ -19,6 +21,7 @@ const int LED_RED = 3;
 const int LED_GREEN = 15;
 const int LED_BLUE = 13;
 const int LED_PAY = 16;
+const int LED_ERROR = 2;
 
 /*BUTTON*/
 const int BUTTON = 12;
@@ -41,6 +44,7 @@ void setup() {
   pinMode(LED_RED, OUTPUT);
   pinMode(LED_GREEN, OUTPUT);
   pinMode(LED_BLUE, OUTPUT);
+  pinMode(LED_ERROR, OUTPUT);
   pinMode(LED_PAY, OUTPUT);
   digitalWrite(LED_READY, LOW);
 
@@ -79,7 +83,7 @@ void loop() {
           uid.replace(" ", "");
 
 
-          String url = "/pay?uid=";
+          String url = "/pay.php?uid=";
           url += uid;
           url += "&product=";
           url += cproduct;
@@ -89,6 +93,46 @@ void loop() {
           if (httpCode) {
             if (httpCode == 200) {
               String payload = http.getString();
+              if (payload.indexOf("ERROR") > 0) {
+
+              }
+            }
+            if (httpCode == 404) { //2 hosszu --> nincs udito
+              digitalWrite(LED_ERROR, LOW);
+              delay(500);
+              digitalWrite(LED_ERROR, HIGH);
+              delay(1500);
+              digitalWrite(LED_ERROR, LOW);
+              delay(500);
+              digitalWrite(LED_ERROR, HIGH);
+              delay(1500);
+              digitalWrite(LED_ERROR, LOW);
+            }
+            if (httpCode == 403) { // 1hosszu 1 rovid 1 hosszu --> nincs pénz
+              digitalWrite(LED_ERROR, LOW);
+              delay(500);
+              digitalWrite(LED_ERROR, HIGH);
+              delay(1500);
+              digitalWrite(LED_ERROR, LOW);
+              delay(500);
+              digitalWrite(LED_ERROR, HIGH);
+              delay(500);
+              digitalWrite(LED_ERROR, LOW);
+              delay(500);
+              digitalWrite(LED_ERROR, HIGH);
+              delay(1500);
+              digitalWrite(LED_ERROR, LOW);
+            }
+            if (httpCode == 401) { // 2hosszu --> új felhaználó
+              digitalWrite(LED_READY, LOW);
+              delay(500);
+              digitalWrite(LED_READY, HIGH);
+              delay(1500);
+              digitalWrite(LED_READY, LOW);
+              delay(500);
+              digitalWrite(LED_READY, HIGH);
+              delay(1500);
+              digitalWrite(LED_READY, LOW);
             }
           }
           http.end();
@@ -101,23 +145,30 @@ void loop() {
           digitalWrite(LED_BLUE, LOW);
           digitalWrite(LED_GREEN, LOW);
 
-        } else {
-          digitalWrite(LED_PAY, LOW);
+        } else { //4 rövid Nincs Wifi kapcsolat
+          digitalWrite(LED_ERROR, LOW);
           delay(500);
-          digitalWrite(LED_PAY, HIGH);
+          digitalWrite(LED_ERROR, HIGH);
           delay(500);
-          digitalWrite(LED_PAY, LOW);
+          digitalWrite(LED_ERROR, LOW);
           delay(500);
-          digitalWrite(LED_PAY, HIGH);
+          digitalWrite(LED_ERROR, HIGH);
           delay(500);
-          digitalWrite(LED_PAY, LOW);
+          digitalWrite(LED_ERROR, LOW);
           delay(500);
-          digitalWrite(LED_PAY, HIGH);
+          digitalWrite(LED_ERROR, HIGH);
           delay(500);
+          digitalWrite(LED_ERROR, LOW);
+          delay(500);
+          digitalWrite(LED_ERROR, HIGH);
+          delay(500);
+          digitalWrite(LED_ERROR, LOW);
+
         }
       } else {
         startTime = millis();
       }
+      digitalWrite(LED_ERROR, LOW);
       digitalWrite(LED_PAY, LOW);
     }
   } else {
@@ -126,19 +177,19 @@ void loop() {
         digitalWrite(LED_RED, LOW);
         digitalWrite(LED_BLUE, HIGH);
         counter = 1;
-        cproduct = 0;
+        cproduct = 1;
         break;
       case 1:
         digitalWrite(LED_BLUE, LOW);
         digitalWrite(LED_GREEN, HIGH);
         counter = 2;
-        cproduct = 1;
+        cproduct = 2;
         break;
       case 2:
         digitalWrite(LED_GREEN, LOW);
         digitalWrite(LED_RED, HIGH);
         counter = 0;
-        cproduct = 2;
+        cproduct = 3;
         break;
     }
     startTime = millis();
