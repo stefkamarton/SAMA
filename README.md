@@ -13,6 +13,7 @@ Az üdítők és az úgynevezett "bankkártyák" adatait egy adatbázisban fogju
 - BreadBoard
 
 **Telepítés:** [Kattintson  ide](https://github.com/stefkamarton/SAMA/blob/master/wiki/fejlesztoi_dokumentacio.md)
+
 **Felhasználói dokumentáció:** [Kattintson  ide](https://github.com/stefkamarton/SAMA/blob/master/wiki/felhasznaloi_dokumentacio.md)
 #### Készítette: 
 #### Adorján András @mrpig2000
