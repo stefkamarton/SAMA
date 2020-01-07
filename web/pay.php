@@ -18,14 +18,15 @@ if (empty($result)) {
                 doQuery(array("sql" => "UPDATE cards SET money=:money WHERE uid=:uid", "attr" => array("uid" => $_GET['uid'], "money" => ($result['money'] - $prod['price']))));
                 doQuery(array("sql" => "INSERT INTO history (uid,step,money) VALUES (:uid,:step,:money)", "attr" => array("uid" => $_GET['uid'], "step" => "BUY_" . $_GET['product'], "money" => $prod['price'])));
             } else {
-                //elfogyott az udito
+                //elfogyott
+                mail("stefkamarton14@gmail.com","Elfogyott az űdítő","FIGYELEM elfogyott az alábbi űdítő: ".$prod['name']);
                 header('HTTP/1.1 404 Not Found');
                 doQuery(array("sql" => "INSERT INTO history (uid,step,money) VALUES (:uid,:step,:money)", "attr" => array("uid" => $_GET['uid'], "step" => "NO_DRINK", "money" => $prod['price'])));
             }
         } else {
+            mail($result['email'],"Fizetési probléma","FIGYELEM nincs elég pénzed az alábbi űdítő: ".$prod['name']." megvásárlásához. Egyenleged:".$result['money']);
             header('HTTP/1.1 403 Forbidden');
             doQuery(array("sql" => "INSERT INTO history (uid,step,money) VALUES (:uid,:step,:money)", "attr" => array("uid" => $_GET['uid'], "step" => "NO_MONEY", "money" => $prod['price'])));
-            //nincs money
         }
     }
 }
