@@ -76,7 +76,7 @@ require_once 'db.php';
 $result = doQuery(array("sql" => "SELECT products.pid AS 'Pid', products.count AS 'count', products.name AS 'name', products.price AS 'price' FROM history INNER JOIN products ON history.step LIKE CONCAT('%',products.pid,'%') GROUP BY products.pid", "attr" => array()))->fetchAll(PDO::FETCH_ASSOC);
 echo "<div class='table'>"
  .      "<div class='thead'>"
-        .   "<div class='tr'>"
+        .   "<div class='tr' style='background:black;'>"
         .       "<div class='th'>Pid</div>"
         .       "<div class='th'>Termék neve</div>"
         .       "<div class='th'>Jelenlegi ár</div>"
@@ -102,7 +102,7 @@ echo         "</div>"
 $result = doQuery(array("sql" => "SELECT cards.uid AS 'Uid', cards.name AS 'name', cards.email AS 'email', cards.money AS 'money', COUNT(history.step) AS 'transaction_count' FROM history INNER JOIN cards ON history.uid = cards.uid GROUP BY cards.uid", "attr" => array()))->fetchAll(PDO::FETCH_ASSOC);
 echo "<div class='table'>"
  .      "<div class='thead'>"
-        .   "<div class='tr'>"
+        .   "<div class='tr' style='background:black;'>"
         .       "<div class='th'>Uid</div>"
         .       "<div class='th'>Név</div>"
         .       "<div class='th'>E-mail</div>"

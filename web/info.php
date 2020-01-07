@@ -13,6 +13,11 @@
         --green:#8bc34a;
 
     }
+    h2{
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 1.6em;
+    }
     .table{
         line-height: 2em;
         display:table;
@@ -100,63 +105,149 @@ require_once 'db.php';
 
 echo "<a href='" . getDomain() . "/list.php" . "' style='max-width:200px;' class='btn red'>Vissza</a>";
 if (isset($_GET['uid'])) {
-    $result = doQuery(array("sql" => "SELECT cards.uid AS 'Uid', cards.name AS 'name', COUNT(history.step) AS 'darab',AVG(history.money) AS 'avgprice', MIN(history.money) AS 'minprice', MAX(history.money) AS 'maxprice', SUM(history.money) AS 'osszartermek', history.step AS 'termeknev' FROM cards INNER JOIN history ON history.uid = cards.uid WHERE cards.uid=:uid GROUP BY history.step", "attr" => array("uid" => $_GET['uid'])))->fetchAll(PDO::FETCH_ASSOC);
-    echo "<div class='table'>"
-    . "<form action='' method='post' class='tbody'>"
-    . "<div class='tr'>"
-    . "<div class='td'>Vásárlási statisztika:</div>"
-    . "<div class='td'>" . $result[0]['name'] . "</div>"
-    . " </div>";
-    for ($i = 0; $i < count($result); $i++) {
-        if ($result[$i]['termeknev'] == "BUY_1" || $result[$i]['termeknev'] == "BUY_2" || $result[$i]['termeknev'] == "BUY_3") {
-            $result[$i]['termeknev'] = str_replace("BUY_", "", $result[$i]['termeknev']);
-            $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
-            echo "<div class='tr'>"
-            . "<div class='td'><b><u>Termék:</u></b><br>Vásárolt darab:<br>Összesen elköltött pénz erre a termékre:<br>Legdrágább vásárlási ár:<br>Legolcsóbb vásárlási ár:<br>Átlag vásárlási ár:<br>Jelenlegi ár:</div>"
-            . "<div class='td'>" . $prod['name'] . "<br>" . $result[$i]['darab'] . " db<br>" . $result[$i]['osszartermek'] . " Ft<br>" . $result[$i]['maxprice'] . " Ft / db<br>" . $result[$i]['minprice'] . " Ft / db<br>" . $result[$i]['avgprice'] . " Ft / db<br>" . $prod['price'] . " Ft / db</div>"
-            . " </div>";
-        }
-        if ($result[$i]['termeknev'] == "UPLOAD_MONEY") {
-            $result[$i]['termeknev'] = "Pénz feltöltés";
-            $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
-            echo "<div class='tr'>"
-            . "<div class='td'><b><u>Pénz feltöltés:</u></b><br>Összes pénz feltöltés:<br>Összesen feltöltött pénz:<br>Legnagyobb feltöltött összeg:<br>Legkisebb feltöltött összeg:<br>Átlagosan feltöltött összeg:</div>"
-            . "<div class='td'>" . $prod['name'] . "<br>" . $result[$i]['darab'] . " db<br>" . $result[$i]['osszartermek'] . " Ft<br>" . $result[$i]['maxprice'] . " Ft<br>" . $result[$i]['minprice'] . " Ft<br>" . $result[$i]['avgprice'] . " Ft</div>"
-            . " </div>";
+    $result = doQuery(array("sql" => "SELECT cards.uid AS 'Uid', cards.money AS 'money', cards.name AS 'name', COUNT(history.step) AS 'darab',AVG(history.money) AS 'avgprice', MIN(history.money) AS 'minprice', MAX(history.money) AS 'maxprice', SUM(history.money) AS 'osszartermek', history.step AS 'termeknev' FROM cards INNER JOIN history ON history.uid = cards.uid WHERE cards.uid=:uid GROUP BY history.step", "attr" => array("uid" => $_GET['uid'])))->fetchAll(PDO::FETCH_ASSOC);
+    if (empty($result)) {
+        echo "<h2>Jelenleg még nem készíthető statisztika</h2>";
+    } else {
+        echo "<h2>" . $result[0]['name'] . "</h2>";
+        for ($i = 0; $i < count($result); $i++) {
+            if ($result[$i]['termeknev'] == "BUY_1" || $result[$i]['termeknev'] == "BUY_2" || $result[$i]['termeknev'] == "BUY_3") {
+                $result[$i]['termeknev'] = str_replace("BUY_", "", $result[$i]['termeknev']);
+                $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
+                echo "<div class='table'><div class='tbody'>";
+                echo "<div class='tr' style='background:black;'>"
+                . "<div class='td'><b><u>Vásárolt termék:</u></b></div>"
+                . "<div class='td'>" . $prod['name'] . "</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Vásárolt darab:</div>"
+                . "<div class='td'>" . $result[$i]['darab'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Összesen elköltött pénz erre a termékre:</div>"
+                . "<div class='td'>" . $result[$i]['osszartermek'] . " Ft</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Legdrágább vásárlási ár:</div>"
+                . "<div class='td'>" . $result[$i]['maxprice'] . " Ft / db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Legolcsóbb vásárlási ár:</div>"
+                . "<div class='td'>" . $result[$i]['minprice'] . " Ft / db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Átlag vásárlási ár:</div>"
+                . "<div class='td'>" . $result[$i]['avgprice'] . " Ft / db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Jelenlegi vásárlási ár:</div>"
+                . "<div class='td'>" . $prod['price'] . " Ft / db</div>"
+                . "</div>";
+                echo "</div></div>";
+            }
+            if ($result[$i]['termeknev'] == "UPLOAD_MONEY") {
+                $result[$i]['termeknev'] = "Pénz feltöltés";
+                $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
+                echo "<div class='table'><div class='tbody'>";
+                echo "<div class='tr' style='background:black;'>"
+                . "<div class='td'><b><u>Pénz feltöltés:</u></b></div>"
+                . "<div class='td'></div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Jelenlegi egyenleg:</div>"
+                . "<div class='td'>" . $result[$i]['money'] . " Ft</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Összes pénz feltöltés:</div>"
+                . "<div class='td'>" . $result[$i]['darab'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Összesen feltöltött pénz:</div>"
+                . "<div class='td'>" . $result[$i]['osszartermek'] . " Ft</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Legnagyobb feltöltött összeg:</div>"
+                . "<div class='td'>" . $result[$i]['maxprice'] . " Ft</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Legkisebb feltöltött összeg:</div>"
+                . "<div class='td'>" . $result[$i]['minprice'] . " Ft</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Átlagosan feltöltött összeg:</div>"
+                . "<div class='td'>" . $result[$i]['avgprice'] . " Ft</div>"
+                . "</div>";
+                echo "</div></div>";
+            }
         }
     }
-
-    echo "</form></div>";
 }
 if (isset($_GET['pid'])) {
-    $result = doQuery(array("sql" => "SELECT products.pid AS 'Pid', products.name AS 'name' FROM products WHERE products.pid=:pid", "attr" => array("pid" => $_GET['pid'])))->fetchAll(PDO::FETCH_ASSOC);
-    var_dump($result);
-    echo "<div class='table'>"
-    . "<form action='' method='post' class='tbody'>"
-    . "<div class='tr'>"
-    . "<div class='td'>Vásárlási statisztika:</div>"
-    . "<div class='td'>" . $result[0]['name'] . "</div>"
-    . " </div>";
-    for ($i = 0; $i < count($result); $i++) {
-        if ($result[$i]['termeknev'] == "BUY_1" || $result[$i]['termeknev'] == "BUY_2" || $result[$i]['termeknev'] == "BUY_3") {
-            $result[$i]['termeknev'] = str_replace("BUY_", "", $result[$i]['termeknev']);
-            $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
-            echo "<div class='tr'>"
-            . "<div class='td'><b><u>Termék:</u></b><br>Vásárolt darab:<br>Összesen elköltött pénz erre a termékre:<br>Legdrágább vásárlási ár:<br>Legolcsóbb vásárlási ár:<br>Átlag vásárlási ár:<br>Jelenlegi ár:</div>"
-            . "<div class='td'>" . $prod['name'] . "<br>" . $result[$i]['darab'] . " db<br>" . $result[$i]['osszartermek'] . " Ft<br>" . $result[$i]['maxprice'] . " Ft / db<br>" . $result[$i]['minprice'] . " Ft / db<br>" . $result[$i]['avgprice'] . " Ft / db<br>" . $prod['price'] . " Ft / db</div>"
-            . " </div>";
-        }
-        if ($result[$i]['termeknev'] == "UPLOAD_MONEY") {
-            $result[$i]['termeknev'] = "Pénz feltöltés";
-            $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $result[$i]['termeknev'])))->fetch(PDO::FETCH_ASSOC);
-            echo "<div class='tr'>"
-            . "<div class='td'><b><u>Pénz feltöltés:</u></b><br>Összes pénz feltöltés:<br>Összesen feltöltött pénz:<br>Legnagyobb feltöltött összeg:<br>Legkisebb feltöltött összeg:<br>Átlagosan feltöltött összeg:</div>"
-            . "<div class='td'>" . $prod['name'] . "<br>" . $result[$i]['darab'] . " db<br>" . $result[$i]['osszartermek'] . " Ft<br>" . $result[$i]['maxprice'] . " Ft<br>" . $result[$i]['minprice'] . " Ft<br>" . $result[$i]['avgprice'] . " Ft</div>"
-            . " </div>";
+    $prod = doQuery(array("sql" => "SELECT * FROM products WHERE pid=:pid", "attr" => array("pid" => $_GET['pid'])))->fetch(PDO::FETCH_ASSOC);
+    $result = doQuery(array("sql" => "SELECT products.pid AS 'Pid', products.name AS 'name', prod_history.step AS 'lepes', MIN(prod_history.money) as 'minprice', MAX(prod_history.money) as 'maxprice', AVG(prod_history.money) as 'avgprice', COUNT(prod_history.step) as 'darab' FROM products INNER JOIN prod_history ON prod_history.pid = products.pid WHERE products.pid=:pid GROUP BY prod_history.step", "attr" => array("pid" => $_GET['pid'])))->fetchAll(PDO::FETCH_ASSOC);
+    if (empty($result)) {
+        echo "<h2>Jelenleg még nem készíthető statisztika</h2>";
+    } else {
+        echo "<h2>" . $result[0]['name'] . "</h2>";
+        for ($i = 0; $i < count($result); $i++) {
+            if ($result[$i]['lepes'] == "NEW_PRICE") {
+                echo "<div class='table'><div class='tbody'>";
+                echo "<div class='tr' style='background:black;'>"
+                . "<div class='td'><b><u>Termék ár változás:</u></b></div>"
+                . "<div class='td'></div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Jelenlegi ár:</div>"
+                . "<div class='td'>" . $prod['price'] . " Ft / db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Összes árváltozás száma:</div>"
+                . "<div class='td'>" . $result[$i]['darab'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Legmagasabb ár:</div>"
+                . "<div class='td'>" . $result[$i]['maxprice'] . " Ft / db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Legalacsonyabb ár:</div>"
+                . "<div class='td'>" . $result[$i]['minprice'] . " Ft / db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Átlagos ár:</div>"
+                . "<div class='td'>" . $result[$i]['avgprice'] . " Ft / db</div>"
+                . "</div>";
+                echo "</div></div>";
+            }
+            if ($result[$i]['lepes'] == "NEW_COUNT") {
+                echo "<div class='table'><div class='tbody'>";
+                echo "<div class='tr' style='background:black;'>"
+                . "<div class='td'><b><u>Termék készlet feltöltés:</u></b></div>"
+                . "<div class='td'></div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Jelenlegi darabszám:</div>"
+                . "<div class='td'>" . $prod['count'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Összes feltöltések száma:</div>"
+                . "<div class='td'>" . $result[$i]['darab'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Minimum feltöltött darabszám:</div>"
+                . "<div class='td'>" . $result[$i]['minprice'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Maximum feltöltött darabszám:</div>"
+                . "<div class='td'>" . $result[$i]['maxprice'] . " db</div>"
+                . "</div>";
+                echo "<div class='tr'>"
+                . "<div class='td'>Átlagosan feltöltött darabszám:</div>"
+                . "<div class='td'>" . number_format($result[$i]['avgprice'], 2) . " db</div>"
+                . "</div>";
+                echo "</div></div>";
+            }
         }
     }
-
-    echo "</form></div>";
 }
 ?>
 
