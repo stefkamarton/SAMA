@@ -40,7 +40,8 @@
 - Kék led: GPI16, GND
 - Narancssárga led: GPI01, GND
 
-### Gomb: GND12, 3.3V, GND
+### Gomb: 
+GND12, 3.3V, GND
 
 ### NFC olvasó: 
 - GND -> GND
