@@ -56,6 +56,9 @@ Alaphelyzetben a narancssárga led folyamatosan világít, a többi nem, ez jelz
 ##Sikeres fizetéskor
 **Narancssárga** villanik egyet, a kék led pedig elalszik.
 
+## Sikertelen fizetéskor
+Valamilyen kombinációs villanást fogunk látni az eszközök, illetve készlethiány, pénzhiány esetén e-mail-t küld.
+
 ## Vásárlás
 Amikor folyamatosan világít a sárga led, a gombbal kitudjuk választani az űdítőt.
 Miután kiválasztottuk a megfelelő terméket várjunk addig amíg a **kék led folyamatosan** nem kezd el világítani, 
