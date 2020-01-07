@@ -2,10 +2,15 @@
 ### Telepítés
 **Ubuntu 18.04-es laptop-ra LAMP telepítés**:
 `sudo apt update`
+
 `sudo apt install apache2`
+
 `sudo ufw allow in "Apache Full"`
+
 `sudo apt install mysql-server`
+
 `sudo mysql_secure_installation`
+
 `sudo apt install php libapache2-mod-php php-mysql`
 
 **`sudo nano /etc/apache2/mods-enabled/dir.conf`**
