@@ -19,6 +19,15 @@
     DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
 </IfModule>`
 
+
+`sudo apt install postfix`
+
+`sudo apt install mailutils`
+
+`sudo service postfix restart`
+
+
+
 `sudo systemctl restart apache2`
 
 
