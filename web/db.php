@@ -17,7 +17,7 @@ function getConnection($array = array()) {
     $connectionString = $config['database']['driver'] .
             ':host=' . $config['database']['host'] .
             ((!empty($config['database']['port'])) ? (';port=' . $config['database']['port']) : '') .
-            ';dbname=' . $config['database']['schema'];
+            ';dbname=' . $config['database']['schema'].";charset=utf8";
     try {
         $pdo = new PDO($connectionString, $config['database']['username'], $config['database']['password']);
     } catch (Exception $exc) {
@@ -54,3 +54,8 @@ function doQuery($array = array("sql" => "", "attr" => "")) {
 echo "<h1 style='text-align:center;font-family:Arial'>SAMA PROJECT</h1>";
 
 ?>
+<html>
+<head>
+<meta charset="utf8" />
+</head>
+<body>
