@@ -68,7 +68,9 @@ Ahogyan a példában is látható fizetéskor a mikrokontroller a pay.php fájl-
 Miután megkapta ezeket a paramétereket a php script egy SQL kérést indít ahol lekéri a kártya adatait, a választott termék adatait.
 Majd leellenőrzi, hogy a kártyán van-e elegendő pénz, ha van akkor leellenőrzi, hogy az automatában van-e a termékből, hiba esetén e-mail-t küld illetve
 a php script modósítja a HTTP header-t
+
 Elfogyott űdítőnél --> `HTTP/1.1 404 Not Found` -re modósítja
+
 Kevés pénznél --> `HTTP/1.1 403 Forbidden` -r modósítja a HTTP header-t
 
 Sikeres fizetés után az eszköz visszaáll alap állapotba.
