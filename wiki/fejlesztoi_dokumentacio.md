@@ -9,8 +9,11 @@ Azért választottuk ezt mert az adatbázis használatához elengedhetetlennek �
 
 #### NODEMCU ESP8266
 I/O felület: 3.3V LVTTL
+
 Áramfelvétel: max. 240mA
+
 Tápellátás: MicroUSB-n keresztül
+
 ![5cc1e81c-f762-4651-9a1c-0541f0ad80eb](https://user-images.githubusercontent.com/44652322/72210579-bfd39800-34bd-11ea-9423-5f36f5c8bac9.jpg)
 
 
