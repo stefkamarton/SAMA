@@ -77,7 +77,9 @@ Sikeres fizetés után az eszköz visszaáll alap állapotba.
 
 ### Termékek, vásárlók kezelése
 Erre a célra készítettünk egy web-es felületet, ami kilistázza az adatbázisban szereplő összes kártyát, terméket amikhez két-két gomb-ot is társít.
+
 Részletek gomb --> Itt tudjuk megtekinteni a különböző statisztikákat, mivel minden cselekvést egy külön táblába jegyzünk az adatbázisba így könnyedén tudunk statisztikát készíteni
+
 Modósítás gomb --> Itt az adott termék vagy kártya adatait tudjuk modósítani.
 
 ## Telepítés
